@@ -34,12 +34,11 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:id="@+id/description"
+            android:id="@+id/score"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:maxLines="3"
             android:padding="8dp"
-            android:text="Try DESCRIPTION"
             android:textColor="#666"
             android:textSize="14dp" />
 

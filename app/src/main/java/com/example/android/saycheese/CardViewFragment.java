@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 
 /**
@@ -69,6 +70,9 @@ public class CardViewFragment extends Fragment {
     ImageView previewThumbnail;
     Bitmap bitmap;
 
+    TextView scoreText;
+    double score;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,9 +92,13 @@ public class CardViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
             previewThumbnail = (ImageView) getView().findViewById(R.id.thumbnail);
-            bitmap = getActivity().getIntent().getParcelableExtra("bmp");
+            bitmap = getActivity().getIntent().getExtras().getParcelable("bmp");
             previewThumbnail.setImageBitmap(bitmap);
 
+            score = getActivity().getIntent().getExtras().getDouble("score");
+            String msg = ("Your Teeth Score: " + score);
+            scoreText = (TextView) getView().findViewById(R.id.score);
+            scoreText.setText(msg);
     }
 }
 

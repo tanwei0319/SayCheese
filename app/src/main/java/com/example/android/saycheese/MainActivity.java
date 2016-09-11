@@ -206,7 +206,10 @@ public class MainActivity extends AppCompatActivity {
     public void viewLog(View view) {
         Intent intent = new Intent(this, CardViewActivity.class);
         tempBitmap = getResizedBitmap(tempBitmap, 350, 350);
-        intent.putExtra("bmp", tempBitmap);
+        Bundle extras = new Bundle();
+        extras.putParcelable("bmp",tempBitmap);
+        extras.putDouble("score", scoreForActivity);
+        intent.putExtras(extras);
         startActivity(intent);
     }
 
@@ -303,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
         LogHelper.addDetectionLog(log);
     }
 
+    double scoreForActivity;
     // The adapter of the GridView which contains the details of the detected faces.
     private class FaceListAdapter extends BaseAdapter {
         // The detected faces.
@@ -318,6 +322,9 @@ public class MainActivity extends AppCompatActivity {
 
             if (detectionResult != null) {
                 faces = Arrays.asList(detectionResult);
+                if (faces.size() > 1) {
+                    setInfo("Please use a picture with only your face in it.");
+                }
                 for (Face face : faces) {
                     try {
                         // Crop face thumbnail with five main landmarks drawn from original image.
@@ -366,7 +373,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Show the face details.
             DecimalFormat formatter = new DecimalFormat("#0.0");
-            String face_description = "Smile: " + formatter.format(faces.get(position).faceAttributes.smile);
+            double score = Math.max((faces.get(position).faceAttributes.smile - 0.2) * 100 , 0);
+            scoreForActivity = score;
+            String face_description = "Score: " + formatter.format(score);
             ((TextView) convertView.findViewById(R.id.text_detected_face)).setText(face_description);
 
             return convertView;
