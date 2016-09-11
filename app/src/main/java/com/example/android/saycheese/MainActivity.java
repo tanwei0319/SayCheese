@@ -30,6 +30,7 @@ import com.example.android.saycheese.helper.SampleApp;
 import com.example.android.saycheese.helper.SelectImageActivity;
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.contract.Face;
+import com.microsoft.projectoxford.face.contract.FaceList;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Disable button "detect" as the image to detect is not selected.
         setDetectButtonEnabledStatus(false);
-
+        setViewLogButtonEnabled(false);
         LogHelper.clearDetectionLog();
     }
 
@@ -181,6 +182,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    public double scoreForActivity;
+
 
     // Called when the "Select Image" button is clicked.
     public void selectImage(View view) {
@@ -254,10 +258,12 @@ public class MainActivity extends AppCompatActivity {
                 ImageView imageView = (ImageView) findViewById(R.id.image);
                 imageView.setImageBitmap(ImageHelper.drawFaceRectanglesOnBitmap(
                         mBitmap, result, true));
-/*
+
                 // Set the adapter of the ListView which contains the details of the detected faces.
                 FaceListAdapter faceListAdapter = new FaceListAdapter(result);
-
+                int score = (int)Math.max((faceListAdapter.faces.get(0).faceAttributes.smile - 0.2) * 100 , 0);
+                scoreForActivity = score;
+/*
                 // Show the detailed list of detected faces.
                 ListView listView = (ListView) findViewById(R.id.list_detected_faces);
                 listView.setAdapter(faceListAdapter);
@@ -277,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     // Set whether the buttons are enabled.
     private void setDetectButtonEnabledStatus(boolean isEnabled) {
         Button detectButton = (Button) findViewById(R.id.detect);
@@ -295,6 +302,10 @@ public class MainActivity extends AppCompatActivity {
         ViewLogButton.setEnabled(isEnabled);
     }
 
+    private void setViewLogButtonEnabled(boolean isEnabled) {
+        Button ViewLogButton = (Button) findViewById(R.id.view_log);
+        ViewLogButton.setEnabled(isEnabled);
+    }
     // Set the information panel on screen.
     private void setInfo(String info) {
         TextView textView = (TextView) findViewById(R.id.info);
@@ -306,7 +317,6 @@ public class MainActivity extends AppCompatActivity {
         LogHelper.addDetectionLog(log);
     }
 
-    double scoreForActivity;
     // The adapter of the GridView which contains the details of the detected faces.
     private class FaceListAdapter extends BaseAdapter {
         // The detected faces.
@@ -324,15 +334,16 @@ public class MainActivity extends AppCompatActivity {
                 faces = Arrays.asList(detectionResult);
                 if (faces.size() > 1) {
                     setInfo("Please use a picture with only your face in it.");
-                }
-                for (Face face : faces) {
-                    try {
-                        // Crop face thumbnail with five main landmarks drawn from original image.
-                        faceThumbnails.add(ImageHelper.generateFaceThumbnail(
-                                mBitmap, face.faceRectangle));
-                    } catch (IOException e) {
-                        // Show the exception when generating face thumbnail fails.
-                        setInfo(e.getMessage());
+                } else {
+                    for (Face face : faces) {
+                        try {
+                            // Crop face thumbnail with five main landmarks drawn from original image.
+                            faceThumbnails.add(ImageHelper.generateFaceThumbnail(
+                                    mBitmap, face.faceRectangle));
+                        } catch (IOException e) {
+                            // Show the exception when generating face thumbnail fails.
+                            setInfo(e.getMessage());
+                        }
                     }
                 }
             }
