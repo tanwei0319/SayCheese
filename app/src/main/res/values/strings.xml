@@ -18,7 +18,7 @@
 
     <!-- Common in all activities -->
     <string name="progress_dialog_title">Please wait</string>
-    <string name="view_log">View Log</string>
+    <string name="view_log">View Result</string>
 
 
     <!-- Detection activity -->
